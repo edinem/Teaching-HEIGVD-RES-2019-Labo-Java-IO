@@ -16,6 +16,8 @@ import java.util.logging.Logger;
  * @author Olivier Liechti
  */
 public class FileNumberingFilterWriter extends FilterWriter {
+  private int numberOfLine = 1;
+  private boolean backslashRDetected = false;
 
   private static final Logger LOG = Logger.getLogger(FileNumberingFilterWriter.class.getName());
 
@@ -25,17 +27,44 @@ public class FileNumberingFilterWriter extends FilterWriter {
 
   @Override
   public void write(String str, int off, int len) throws IOException {
-    throw new UnsupportedOperationException("The student has not implemented this method yet.");
+
+    for(int i = off; i < off + len; ++i){
+      write(str.charAt(i));
+    }
   }
 
   @Override
   public void write(char[] cbuf, int off, int len) throws IOException {
-    throw new UnsupportedOperationException("The student has not implemented this method yet.");
+    for(int i = off; i < off + len; ++i){
+      write(cbuf[i]);
+    }
   }
 
   @Override
   public void write(int c) throws IOException {
-    throw new UnsupportedOperationException("The student has not implemented this method yet.");
+
+    char macSeparator9AndBelow = '\r';
+    char macSepartor10AndAboveAndLinux = '\n';
+
+
+    if(numberOfLine == 1) { //Si on est à la première ligne, on insére le numéro
+      this.out.write(String.valueOf(numberOfLine++) + '\t');
+      this.out.write(c);
+    }else if(macSepartor10AndAboveAndLinux == (char)c){ //forcement une fin de ligne avec \n
+      backslashRDetected = false;
+      this.out.write(c);
+      this.out.write(String.valueOf(numberOfLine++) + '\t');
+    }else if(macSeparator9AndBelow == (char)c){ //si c'est un \r on fixe la variable à true et on ecrit le caractère.
+      backslashRDetected = true;
+      this.out.write(c);
+    }else if(backslashRDetected){ //si le \r a été trouvé avant, cela veut dire que c'était un retour à la ligne. Donc on mets le numéro avant.
+      backslashRDetected = false;
+      this.out.write(String.valueOf(numberOfLine++) + '\t');
+      this.out.write(c);
+    }else{ //autrement on écrit juste le caractère.
+      this.out.write(c);
+    }
+    //throw new UnsupportedOperationException("The student has not implemented this method yet.");
   }
 
 }

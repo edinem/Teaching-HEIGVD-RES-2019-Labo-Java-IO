@@ -25,39 +25,37 @@ public class Utils {
 
     String macSeparator9AndBelow = "\r";
     String macSepartor10AndAboveAndLinux = "\n";
-    String windowSeparator = macSeparator9AndBelow + macSepartor10AndAboveAndLinux;
-
-
-
+    String windowSeparator = macSeparator9AndBelow + macSepartor10AndAboveAndLinux; //\r\n
 
     //in case of Windows OS. We start with this one because it's the more complete "\r\n";
     if(lines.contains(windowSeparator)){
-          tmp = lines.split(windowSeparator,2);
-          //we add the separator
-          tmp[0] += windowSeparator;
-      }
+        tmp = split(windowSeparator,lines);
+    }
 
     //in case of mac 9 and below OS
     else if(lines.contains(macSeparator9AndBelow)){
-      tmp = lines.split(macSeparator9AndBelow,2);
-      tmp[0] += macSeparator9AndBelow;
+        tmp = split(macSeparator9AndBelow,lines);
     }
 
     //in case of mac 10 and above OS
     else if(lines.contains(macSepartor10AndAboveAndLinux)){
-      tmp = lines.split(macSepartor10AndAboveAndLinux,2);
-      //we add the separator
-      tmp[0] += macSepartor10AndAboveAndLinux;
+        tmp = split(macSepartor10AndAboveAndLinux,lines);
     }
 
     //otherwise
     else{
-      tmp = new String[] {"",lines};
+        tmp = new String[] {"",lines};
     }
 
     return tmp;
 
     //throw new UnsupportedOperationException("The student has not implemented this method yet.");
+  }
+
+  public static String[] split(String separator, String lines){
+    String[] tmp = lines.split(separator,2);
+    tmp[0] += separator;
+    return tmp;
   }
 
 }
