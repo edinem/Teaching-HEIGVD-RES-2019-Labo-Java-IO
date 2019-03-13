@@ -7,10 +7,8 @@ import ch.heigvd.res.labio.interfaces.IFileExplorer;
 import ch.heigvd.res.labio.interfaces.IFileVisitor;
 import ch.heigvd.res.labio.quotes.QuoteClient;
 import ch.heigvd.res.labio.quotes.Quote;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
+
+import java.io.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +92,7 @@ public class Application implements IApplication {
        * quote in a text file (and for generating the directories based on the tags).
        */
 
-      storeQuote(quote,"quote-"+i); //demander au prof
+      storeQuote(quote,"quote-"+(i+1)+".utf8"); //demander au prof
 
       LOG.info("Received a new joke with " + quote.getTags().size() + " tags.");
       for (String tag : quote.getTags()) {
@@ -130,10 +128,6 @@ public class Application implements IApplication {
    */
   void storeQuote(Quote quote, String filename) throws IOException {
 
-    if(quote.getTags().isEmpty() == false){
-      return;
-    }
-
     String dirName = WORKSPACE_DIRECTORY + "/";
 
     List<String> quotesTags = quote.getTags();
@@ -142,13 +136,15 @@ public class Application implements IApplication {
             dirName += currentTag + "/";
     }
 
-    dirName += ".utf8";
-
-    File ws = new File(dirName);
+    File ws = new File(dirName + filename);
 
     ws.getParentFile().mkdirs();
 
-    //throw new UnsupportedOperationException("The student has not implemented this method yet.");
+    ws.createNewFile();
+
+    FileWriter fw = new FileWriter(ws);
+    fw.write(quote.getQuote());
+    fw.close();
   }
 
   /**
@@ -166,7 +162,7 @@ public class Application implements IApplication {
          * be pretty easy (we want to write the filename, including the path, to the writer passed in argument).
          */
         try{
-            writer.write(file.getPath() + file.getName());
+            writer.write(file.getPath() + "\n");
         }catch(IOException ex){
             LOG.log(Level.SEVERE, "Could not write the filename including the path", ex.getMessage());
         }

@@ -19,31 +19,30 @@ public class DFSFileExplorer implements IFileExplorer {
   @Override
   public void explore(File rootDirectory, IFileVisitor vistor) {
 
-      if(rootDirectory != null){
-          vistor.visit(rootDirectory);
-
-          File[] listFiles = rootDirectory.listFiles();
-          ArrayList<File> listDirectory = new ArrayList<>();
-
-          if(listFiles != null) {
-              Arrays.sort(listFiles);
-              for (File currentFile : listFiles) {
-                  if(currentFile.isFile()){
-                      vistor.visit(currentFile);
-                  }else if(currentFile.isDirectory()){
-                      listDirectory.add(currentFile);
-                  }
-              }
-
-              for(File currentDir : listDirectory){
-                  explore(currentDir,vistor);
-              }
-          }
-      }else{
+      if(rootDirectory == null){
           return;
       }
 
-   // throw new UnsupportedOperationException("The student has not implemented this method yet.");
+      vistor.visit(rootDirectory);
+
+      //On crée deux tableaux. Un avec les fichiers et l'autre avec les répertoires. La méthode de sélection
+      // a été donnée par Olivier Liechti.
+      File[] listFiles = rootDirectory.listFiles(File::isFile);
+      File[] listDirectories = rootDirectory.listFiles(File::isDirectory);
+
+
+      if(listDirectories != null ) {
+          Arrays.sort(listDirectories);
+          for (File currentDirectory : listDirectories) {
+              explore(currentDirectory,vistor);
+          }
+      }
+      if(listFiles != null ) {
+          Arrays.sort(listFiles);
+          for (File currentFile : listFiles) {
+              vistor.visit(currentFile);
+          }
+      }
   }
 
 }
